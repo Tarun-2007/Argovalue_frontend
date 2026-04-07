@@ -1,7 +1,13 @@
 import axios from 'axios';
 
+const apiBaseUrl = process.env.REACT_APP_API_URL;
+
+if (process.env.NODE_ENV === 'production' && !apiBaseUrl) {
+  throw new Error('Missing REACT_APP_API_URL. Set it to your deployed backend URL in Vercel.');
+}
+
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000/api',
+  baseURL: apiBaseUrl || 'http://localhost:5000/api',
   headers: {
     'Content-Type': 'application/json',
   },
