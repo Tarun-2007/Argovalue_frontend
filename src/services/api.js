@@ -1,10 +1,7 @@
 import axios from 'axios';
 
 const apiBaseUrl = process.env.REACT_APP_API_URL;
-
-if (process.env.NODE_ENV === 'production' && !apiBaseUrl) {
-  throw new Error('Missing REACT_APP_API_URL. Set it to your deployed backend URL in Vercel.');
-}
+const isProductionApiMissing = process.env.NODE_ENV === 'production' && !apiBaseUrl;
 
 const api = axios.create({
   baseURL: apiBaseUrl || 'http://localhost:5000/api',
@@ -15,6 +12,12 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
+    if (isProductionApiMissing) {
+      return Promise.reject(
+        new Error('Backend API is not configured yet. Set REACT_APP_API_URL in Vercel to your deployed backend URL.')
+      );
+    }
+
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

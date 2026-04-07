@@ -22,7 +22,7 @@ const AdminRegister = () => {
       await authService.register({ ...formData, role: 'admin' });
       navigate('/admin-dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed');
+      setError(err.response?.data?.message || err.message || 'Registration failed');
     } finally {
       setLoading(false);
     }
