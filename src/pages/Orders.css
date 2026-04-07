@@ -1,7 +1,9 @@
 .orders-page {
+  min-height: calc(100vh - 80px);
+  background: #f9fafb;
   max-width: 1000px;
-  margin: 100px auto 40px;
-  padding: 20px;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
 .orders-page h1 {
@@ -131,8 +133,7 @@
 
 @media (max-width: 768px) {
   .orders-page {
-    margin-top: 80px;
-    padding: 15px;
+    padding: 1.5rem;
   }
 
   .order-header {

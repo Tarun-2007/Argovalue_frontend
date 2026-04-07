@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { authService } from '../services/authService';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
@@ -12,6 +11,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     loadUsers();
     loadStats();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadUsers = () => {

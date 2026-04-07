@@ -19,10 +19,12 @@ const UserRegister = () => {
     setLoading(true);
 
     try {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
       await authService.register({ ...formData, role: 'user' });
       navigate('/user-dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed');
+      setError(err.response?.data?.message || err.message || 'Registration failed. Check your details and try again.');
     } finally {
       setLoading(false);
     }

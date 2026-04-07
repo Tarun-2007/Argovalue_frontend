@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Navigate, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import PrivateRoute from './components/PrivateRoute';
 import Home from './pages/Home';
@@ -24,7 +24,7 @@ import './App.css';
 
 function App() {
   return (
-    <Router>
+    <Router future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
       <div className="App">
         <Navbar />
         <Routes>
@@ -48,6 +48,7 @@ function App() {
           <Route path="/roles" element={<PrivateRoute><RolesResponsibilities /></PrivateRoute>} />
           <Route path="/product-approval" element={<PrivateRoute adminOnly><ProductApproval /></PrivateRoute>} />
           <Route path="/orders" element={<PrivateRoute><Orders /></PrivateRoute>} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
     </Router>

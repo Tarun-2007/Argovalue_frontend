@@ -1,73 +1,38 @@
-import { authService } from './authService';
+import api from './api';
 
 export const productService = {
   getAllProducts: async () => {
-    const products = JSON.parse(localStorage.getItem('products') || '[]');
-    return products;
+    const response = await api.get('/products');
+    return response.data;
   },
 
   getProductById: async (id) => {
-    const products = JSON.parse(localStorage.getItem('products') || '[]');
-    return products.find(p => p.id === id);
+    const response = await api.get(`/products/${id}`);
+    return response.data;
   },
 
   createProduct: async (productData) => {
-    const user = authService.getCurrentUser();
-    if (!user) {
-      throw new Error('User not authenticated');
-    }
-    
-    const products = JSON.parse(localStorage.getItem('products') || '[]');
-    const newProduct = {
-      id: Date.now(),
-      ...productData,
-      userId: user.id,
-      status: 'pending',
-      createdAt: new Date().toISOString()
-    };
-    
-    products.push(newProduct);
-    localStorage.setItem('products', JSON.stringify(products));
-    return newProduct;
+    const response = await api.post('/products', productData);
+    return response.data;
   },
 
   updateProduct: async (id, productData) => {
-    const products = JSON.parse(localStorage.getItem('products') || '[]');
-    const index = products.findIndex(p => p.id === id);
-    if (index !== -1) {
-      products[index] = { ...products[index], ...productData };
-      localStorage.setItem('products', JSON.stringify(products));
-      return products[index];
-    }
-    throw new Error('Product not found');
+    const response = await api.put(`/products/${id}`, productData);
+    return response.data;
   },
 
   deleteProduct: async (id) => {
-    const products = JSON.parse(localStorage.getItem('products') || '[]');
-    const filtered = products.filter(p => p.id !== id);
-    localStorage.setItem('products', JSON.stringify(filtered));
+    await api.delete(`/products/${id}`);
     return { success: true };
   },
 
   approveProduct: async (id) => {
-    const products = JSON.parse(localStorage.getItem('products') || '[]');
-    const index = products.findIndex(p => p.id === id);
-    if (index !== -1) {
-      products[index].status = 'approved';
-      localStorage.setItem('products', JSON.stringify(products));
-      return products[index];
-    }
-    throw new Error('Product not found');
+    const response = await api.patch(`/products/${id}/approve`);
+    return response.data;
   },
 
   rejectProduct: async (id) => {
-    const products = JSON.parse(localStorage.getItem('products') || '[]');
-    const index = products.findIndex(p => p.id === id);
-    if (index !== -1) {
-      products[index].status = 'rejected';
-      localStorage.setItem('products', JSON.stringify(products));
-      return products[index];
-    }
-    throw new Error('Product not found');
+    const response = await api.patch(`/products/${id}/reject`);
+    return response.data;
   },
 };

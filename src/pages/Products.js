@@ -14,16 +14,10 @@ const Products = () => {
   const fetchProducts = async () => {
     try {
       const data = await productService.getAllProducts();
-      setProducts(data);
+      setProducts(data.filter((product) => product.status !== 'rejected'));
     } catch (err) {
       setError('Failed to load products');
-      // Mock data for demo
-      setProducts([
-        { _id: '1', name: 'Organic Honey', category: 'Dairy & Honey', price: 450, description: 'Pure organic honey from local farms' },
-        { _id: '2', name: 'Mango Pickle', category: 'Pickles', price: 180, description: 'Traditional homemade mango pickle' },
-        { _id: '3', name: 'Wheat Flour', category: 'Grains', price: 60, description: 'Fresh stone-ground wheat flour' },
-        { _id: '4', name: 'Turmeric Powder', category: 'Spices', price: 120, description: 'Organic turmeric powder' },
-      ]);
+      setProducts([]);
     } finally {
       setLoading(false);
     }
@@ -43,7 +37,7 @@ const Products = () => {
 
         <div className="products-grid">
           {products.map((product) => (
-            <div key={product._id} className="product-card">
+            <div key={product.id} className="product-card">
               <div className="product-image">
                 <div className="product-placeholder">🌾</div>
               </div>

@@ -28,6 +28,8 @@ const Register = () => {
     }
 
     setLoading(true);
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     try {
       await authService.register(formData);
       navigate('/dashboard');

@@ -4,12 +4,13 @@ import { Link } from 'react-router-dom';
 import './UserDashboard.css';
 
 const UserDashboard = () => {
-  const [user, setUser] = useState(authService.getCurrentUser());
+  const [user] = useState(authService.getCurrentUser());
   const [products, setProducts] = useState([]);
   const [stats, setStats] = useState({ myProducts: 0, enrolled: 0, posts: 0 });
 
   useEffect(() => {
     loadUserData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadUserData = () => {

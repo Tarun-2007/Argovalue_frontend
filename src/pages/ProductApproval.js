@@ -5,14 +5,20 @@ import './ProductApproval.css';
 const ProductApproval = () => {
   const [products, setProducts] = useState([]);
   const [filter, setFilter] = useState('pending');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     loadProducts();
   }, []);
 
   const loadProducts = async () => {
-    const allProducts = await productService.getAllProducts();
-    setProducts(allProducts);
+    try {
+      const allProducts = await productService.getAllProducts();
+      setProducts(allProducts);
+      setError('');
+    } catch (err) {
+      setError('Failed to load products');
+    }
   };
 
   const handleApprove = async (id) => {
@@ -30,6 +36,7 @@ const ProductApproval = () => {
   return (
     <div className="approval-page">
       <h1>Product Approval Management</h1>
+      {error && <div className="error-message">{error}</div>}
       
       <div className="filter-tabs">
         <button className={filter === 'pending' ? 'active' : ''} onClick={() => setFilter('pending')}>
@@ -49,7 +56,7 @@ const ProductApproval = () => {
         ) : (
           filteredProducts.map(product => (
             <div key={product.id} className="approval-card">
-              <img src={product.image || 'https://images.unsplash.com/photo-1560493676-04071c5f467b?w=300'} alt={product.name} />
+              <img src={product.imageUrl || 'https://images.unsplash.com/photo-1560493676-04071c5f467b?w=300'} alt={product.name} />
               <div className="product-details">
                 <h3>{product.name}</h3>
                 <p className="category">{product.category}</p>

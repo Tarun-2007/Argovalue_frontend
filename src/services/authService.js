@@ -1,42 +1,26 @@
+import api from './api';
+
 export const authService = {
   register: async (userData) => {
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    
-    if (users.find(u => u.email === userData.email)) {
-      const error = new Error('Email already exists');
-      error.response = { data: { message: 'Email already exists' } };
-      throw error;
-    }
-    
-    const role = userData.role || 'user';
-    const user = { id: Date.now(), ...userData, role };
-    delete user.password;
-    users.push({ ...userData, id: user.id, role });
-    localStorage.setItem('users', JSON.stringify(users));
-    
-    const token = btoa(JSON.stringify({ id: user.id, email: user.email, role }));
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    const response = await api.post('/auth/register', userData);
+    const { token, name, email, role } = response.data;
+    const user = { name, email, role };
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(user));
-    
     return { token, user };
   },
 
   login: async (credentials) => {
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const user = users.find(u => u.email === credentials.email && u.password === credentials.password);
-    
-    if (!user) {
-      const error = new Error('Invalid email or password');
-      error.response = { data: { message: 'Invalid email or password' } };
-      throw error;
-    }
-    
-    const token = btoa(JSON.stringify({ id: user.id, email: user.email, role: user.role }));
-    const userData = { id: user.id, name: user.name, email: user.email, role: user.role, phone: user.phone, location: user.location };
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    const response = await api.post('/auth/login', credentials);
+    const { token, name, email, role } = response.data;
+    const user = { name, email, role };
     localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(userData));
-    
-    return { token, user: userData };
+    localStorage.setItem('user', JSON.stringify(user));
+    return { token, user };
   },
 
   logout: () => {
@@ -45,8 +29,12 @@ export const authService = {
   },
 
   getCurrentUser: () => {
-    const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
+    try {
+      const user = localStorage.getItem('user');
+      return user ? JSON.parse(user) : null;
+    } catch {
+      return null;
+    }
   },
 
   isAuthenticated: () => {
@@ -55,24 +43,13 @@ export const authService = {
 
   isAdmin: () => {
     const user = authService.getCurrentUser();
-    return user?.role === 'admin';
+    return user?.role === 'ADMIN' || user?.role === 'admin';
   },
 
   updateProfile: async (userId, updates) => {
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const userIndex = users.findIndex(u => u.id === userId);
-    
-    if (userIndex === -1) {
-      throw new Error('User not found');
-    }
-    
-    users[userIndex] = { ...users[userIndex], ...updates };
-    localStorage.setItem('users', JSON.stringify(users));
-    
-    const updatedUser = { ...users[userIndex] };
-    delete updatedUser.password;
+    const user = authService.getCurrentUser();
+    const updatedUser = { ...user, ...updates };
     localStorage.setItem('user', JSON.stringify(updatedUser));
-    
     return updatedUser;
   },
 };
