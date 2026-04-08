@@ -30,3 +30,5 @@ yarn-error.log*
 /backend/.classpath
 /backend/.factorypath
 /backend/.project
+
+.vercel
